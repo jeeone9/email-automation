@@ -5,6 +5,7 @@ namespace App\Services;
 use Log;
 use Carbon\Carbon;
 use App\Models\Contracts;
+use Illuminate\Support\Facades\Mail;
 
 class MailSender
 {
