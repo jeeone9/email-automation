@@ -9,9 +9,10 @@ use Illuminate\Support\Facades\Mail;
 
 class MailSender
 {
-	public static function triggerMails()
+	public static function triggerMails($status = 'not_triggered', $failed = 'retry')
 	{
-		$contracts = Contracts::where("reminder_status", 'not_triggered')
+		// QUES: exact match for date can be there, and retry for failed mails
+		$contracts = Contracts::where("reminder_status", $status)
 						->where("reminder_time", '<', Carbon::now()->toDateTimeString())
 						->where('expiry_time', '>', Carbon::now()->toDateTimeString())
 						->limit(10)
@@ -32,7 +33,7 @@ class MailSender
 				self::send($contract);
 				Contracts::where('contract_id', $contract['contract_id'])->update(["reminder_status" => 'sent']);
 			} catch (\Exception $e) {
-				Contracts::where('contract_id', $contract['contract_id'])->update(["reminder_status" => 'failed']);
+				Contracts::where('contract_id', $contract['contract_id'])->update(["reminder_status" => $failed]);
 				Log::error($e->getMessage());
 			}
 		}	
