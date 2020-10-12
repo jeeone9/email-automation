@@ -28,6 +28,11 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             MailSender::triggerMails();
         })->everyTenMinutes();
+
+        $schedule->call(function () {
+            MailSender::triggerMails('retry', 'failed');
+        })->dailyAt('13:00');
+
     }
 
     /**
