@@ -24,7 +24,7 @@ class CreateContractstable extends Migration
             $table->string('telephone', 50);
             $table->timestamp('expiry_date');
             $table->timestamp('reminder_date');
-            $table->enum('reminder_status', ['not_triggered', 'sending', 'sent', 'failed'])->default('not_triggered');
+            $table->enum('reminder_status', ['not_triggered', 'sending', 'sent', 'retry' ,'failed'])->default('not_triggered');
             $table->timestamps();
         });
 
