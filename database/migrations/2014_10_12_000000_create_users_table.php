@@ -21,6 +21,11 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+        DB::table('users')->insert([
+            'name' => 'Automation User',
+            'email' => 'user@automation.com',
+            'password' => env('ADMIN_PASSWORD')
+        ]);
     }
 
     /**
