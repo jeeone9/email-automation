@@ -7,7 +7,6 @@ use App\Models\Contracts;
 use Carbon\Carbon;
 use App\User;
 use Log;
-use App\Services\MailSender;
 
 class HomeController extends Controller
 {
