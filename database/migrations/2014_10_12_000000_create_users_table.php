@@ -23,7 +23,7 @@ class CreateUsersTable extends Migration
         });
         DB::table('users')->insert([
             'name' => 'Automation User',
-            'email' => 'user@automation.com',
+            'email' => env('ADMIN_USER'),
             'password' => password_hash(env('ADMIN_PASSWORD'), PASSWORD_BCRYPT), 
         ]);
     }
