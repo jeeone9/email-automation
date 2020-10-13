@@ -16,15 +16,12 @@
 
                                 <div class="col-md-6">
                                     <input id="csv_file" type="file" class="form-control" name="csv_file" accept=".csv" required>
-                                        <!-- <span class="help-block">
-                                        <strong>{{ $errors->first('csv_file') }}</strong>
-                                    </span> -->
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <div class="col-md-8 col-md-offset-4">
-                                    <button type="submit" class="btn btn-primary" onClick="importCsv()">
+                                    <button type="submit" class="btn btn-primary">
                                         Upload CSV
                                     </button>
                                 </div>
@@ -43,8 +40,10 @@
                             <th>Expiration Date</th>
                             <th>Email of Salesperson</th>
                             <th>Customer number</th>
-                            <th>Reminder Date</th>
-                            <th>Reminder Status</th>
+                            <th>First Reminder Date</th>
+                            <th>First Reminder Status</th>
+                            <th>Second Reminder Date</th>
+                            <th>Second Reminder Status</th>
                         </tr>
                     </thead>
                 </table>
@@ -72,10 +71,11 @@
                     if(data.msg){
                         alert(data.msg)
                     }
-                    createContractsViewTable()
+                    location.reload();
                 },
                 error:function(request, status, error){
-                    alert('Could not process Request')
+                    alert(JSON.parse(request.responseText).msg)
+                    location.reload();
                 }
             });
         }); 
@@ -94,6 +94,8 @@
                     {data : "customer_number"},
                     {data : "reminder_date"},
                     {data : "reminder_status"},
+                    {data : "reminder_two_date"},
+                    {data : "reminder_two_status"}
                 ]
             });
         }   

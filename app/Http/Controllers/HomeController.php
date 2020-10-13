@@ -51,11 +51,14 @@ class HomeController extends Controller
             try {
                 $expiryDate = Carbon::createFromFormat('d/m/y', $contract['expiry_date'])->toDateTimeString();
                 $reminderDate = Carbon::createFromFormat('d/m/y', $contract['expiry_date'])->subDays(!empty($contract['reminder']) && is_numeric($contract['reminder']) ? (int) $contract['reminder'] : (int) env('REMINDER_DAYS'))->toDateTimeString();
+                $reminderTwoDate = Carbon::createFromFormat('d/m/y', $contract['expiry_date'])->subDays(!empty($contract['reminder_two']) && is_numeric($contract['reminder_two']) ? (int) $contract['reminder_two'] : (int) env('REMINDER_TWO_DAYS'))->toDateTimeString();
 
                 $contract['expiry_date'] = $expiryDate;
                 $contract['reminder_date'] = $reminderDate;
+                $contract['reminder_two_date'] = $reminderTwoDate;
                 unset($contract['reminder']);
-                Contracts::updateOrCreate($contract, ['contract_id' => $contract['contract_id']]);
+                unset($contract['reminder_two']);
+                Contracts::updateOrCreate(['contract_id' => $contract['contract_id']], $contract);
             } catch (\Exception $e) {
                 $errorContracts[] = $contract['contract_id'];
                 Log::error($e->getMessage());
@@ -75,22 +78,27 @@ class HomeController extends Controller
         $file = fopen($path, 'r');
         $header = fgetcsv($file);
         $backendMap = config('constant.csv_headers');
+        $mandatoryFields = config('constant.mandatory_fields');
         $intCols = config('constant.int_cols');
-        if (count($header) !== count($backendMap)) {
+        $header = array_map(function ($v) use ($backendMap) {
+            return isset($backendMap[strtolower($v)]) ? $backendMap[strtolower($v)] : $v;
+        }, $header);
+
+        if (!empty(array_diff(array_values($backendMap), $header))) {
             return [false, 'Invalid CSV columns. Please provide all the columns as specified in sample CSV.'];
         }
-        $header = array_map(function ($v) use ($backendMap) {
-            return $backendMap[strtolower($v)];
-        }, $header);
+
         $output = [];
         while ($row = fgetcsv($file)) {
-            if (count(array_filter(array_map('trim', $row))) !== count($header)) {
-                fclose($file);
-                return [false, 'Invalid CSV rows. Please provide valid information in each contract.'];
-            }
             $temp = array_combine($header, $row);
+            foreach ($mandatoryFields as $mandatoryField) {
+                if (empty($temp[$mandatoryField])) {
+                    fclose($file);
+                    return [false, 'Invalid CSV rows. Please provide valid information in each contract.'];
+                }
+            }
             foreach ($intCols as $intCol) {
-                $temp[$intCol] = (int) $temp[$intCol];
+                $temp[$intCol] = !empty($temp[$intCol]) && is_numeric($temp[$intCol]) ? (int) $temp[$intCol] : $temp[$intCol];
             }
             $output[] = $temp;
         }

@@ -14,8 +14,9 @@ return [
             'city' => 'city',
             'postal code' => 'postal_code',
             'telephone' => 'telephone',
-            'reminder' => 'reminder',
-            'reminder days' => 'reminder',
+            'first reminder days' => 'reminder',
+            'second reminder days' => 'reminder_two',
       ],
-      'int_cols' => ['contract_id', 'customer_number', 'reminder']
+      'mandatory_fields' => ['contract_id', 'expiry_date', 'sales_person', 'sales_person_email', 'details'],
+      'int_cols' => ['contract_id', 'customer_number', 'reminder', 'reminder_two']
 ];
