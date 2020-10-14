@@ -11,32 +11,45 @@ class MailSender
 {
     public static function triggerMails($status = 'not_triggered', $failed = 'retry')
     {
-        $contracts = Contracts::where("reminder_status", $status)
-                        ->where("reminder_date", '<', Carbon::now()->toDateTimeString())
-                        ->where('expiry_date', '>', Carbon::now()->toDateTimeString())
-                        ->limit(10)
-                        ->get();
-        if (empty($contracts)) {
-            return;
-        }
-        $contracts = $contracts->toArray();
+        $remindersArr = [
+            'first' => [
+                'date_column' => 'reminder_date', 
+                'status_column' => 'reminder_status'
+            ],
+            'second' => [
+                'date_column' => 'reminder_two_date', 
+                'status_column' => 'reminder_two_status'
+            ]
+        ];
 
-        $holdContractIds = array_column($contracts, 'contract_id');
-        Contracts::whereIn('contract_id', $holdContractIds)->update(["reminder_status" => 'sending']);
+        foreach ($remindersArr as $type => $keysArr) {
+            $contracts = Contracts::where($keysArr["status_column"], $status)
+                            ->where($keysArr["date_column"], '<', Carbon::now()->toDateTimeString())
+                            ->where('expiry_date', '>', Carbon::now()->toDateTimeString())
+                            ->limit(10)
+                            ->get();
+            if (empty($contracts)) {
+                continue;
+            }
+            $contracts = $contracts->toArray();
 
-        foreach ($contracts as $contract) {
-            $contract['cc_emails'] = array_map('trim', explode(',', $contract['email_resposible']));
-            try {
-                self::send($contract);
-                Contracts::where('contract_id', $contract['contract_id'])->update(["reminder_status" => 'sent']);
-            } catch (\Exception $e) {
-                Contracts::where('contract_id', $contract['contract_id'])->update(["reminder_status" => $failed]);
-                Log::error($e->getMessage());
-                if ($failed === 'failed') {
-                    self::sendErrorMail($contract['contract_id'], $e->getMessage());
+            $holdContractIds = array_column($contracts, 'contract_id');
+            Contracts::whereIn('contract_id', $holdContractIds)->update([$keysArr["status_column"] => 'sending']);
+
+            foreach ($contracts as $contract) {
+                $contract['cc_emails'] = array_map('trim', explode(',', $contract['email_resposible']));
+                try {
+                    self::send($contract, $type === 'second');
+                    Contracts::where('contract_id', $contract['contract_id'])->update([$keysArr["status_column"] => 'sent']);
+                } catch (\Exception $e) {
+                    Contracts::where('contract_id', $contract['contract_id'])->update([$keysArr["status_column"] => $failed]);
+                    Log::error($e->getMessage());
+                    if ($failed === 'failed') {
+                        self::sendErrorMail($contract['contract_id'], $e->getMessage());
+                    }
                 }
             }
-        }
+        }    
 
         return;
     }

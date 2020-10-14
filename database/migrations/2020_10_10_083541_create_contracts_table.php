@@ -25,11 +25,14 @@ class CreateContractstable extends Migration
             $table->timestamp('expiry_date');
             $table->timestamp('reminder_date');
             $table->enum('reminder_status', ['not_triggered', 'sending', 'sent', 'retry' ,'failed'])->default('not_triggered');
+            $table->timestamp('reminder_two_date');
+            $table->enum('reminder_two_status', ['not_triggered', 'sending', 'sent', 'retry' ,'failed'])->default('not_triggered');
             $table->timestamps();
         });
 
         Schema::table('contracts', function (Blueprint $table) {
             $table->index('reminder_status');
+            $table->index('reminder_two_status');
         });
     }
 
