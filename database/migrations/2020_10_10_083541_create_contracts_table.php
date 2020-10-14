@@ -15,7 +15,8 @@ class CreateContractstable extends Migration
             $table->string('sales_person', 100);
             $table->string('sales_person_email', 100);
             $table->string('email_resposible', 200);
-            $table->string('details', 1000);
+            $table->text('details');
+            $table->string('subject', 2000);
             $table->string('customer_name', 100);
             $table->bigInteger('customer_number');
             $table->string('address', 500);
