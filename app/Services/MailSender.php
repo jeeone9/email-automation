@@ -73,9 +73,12 @@ class MailSender
         $details = $mailData['details'];
         $contractId = $mailData['contract_id'];
         $expiryDate = Carbon::parse($mailData['expiry_date'])->format('d M Y');
-        $subject = "Contrato de {$contractId} vence el {$expiryDate}";
-        if ($second) {
-            $subject = "RECORDATORIO ".$subject;
+        $subject = isset($mailData['subject']) ? $mailData['subject'] : "";
+        if (empty(trim($subject))) {
+            $subject = "Contrato de {$contractId} vence el {$expiryDate}";
+            if ($second) {
+                $subject = "RECORDATORIO ".$subject;
+            }
         }
         $templateData = [
             'to_name' => $toName,
@@ -83,6 +86,7 @@ class MailSender
             'expiry_date' => $expiryDate,
             'details' => $details,
         ];
+
         Mail::send('email', $templateData, function ($message) use ($toEmail, $toName, $subject, $ccEmails) {
             $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
             $message->to($toEmail, $toName);

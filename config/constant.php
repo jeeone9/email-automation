@@ -9,6 +9,7 @@ return [
             'email responsible' => 'email_resposible',
             'customer' => 'customer_name',
             'details' => 'details',
+            'subject' => 'subject',
             'customer number' => 'customer_number',
             'address' => 'address',
             'city' => 'city',
