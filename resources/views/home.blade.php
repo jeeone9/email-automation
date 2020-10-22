@@ -70,12 +70,11 @@
                 success:function(data){
                     if(data.msg){
                         alert(data.msg)
+                        location.reload()
                     }
-                    location.reload();
                 },
                 error:function(request, status, error){
                     alert(JSON.parse(request.responseText).msg)
-                    location.reload();
                 }
             });
         }); 
@@ -84,7 +83,7 @@
             $('#contractTable').DataTable().destroy()
             $('#contractTable').DataTable({
                 ajax: {
-                    url: '/contracts',
+                    url: 'contracts',
                     dataSrc: 'data'
                 },
                 columns: [

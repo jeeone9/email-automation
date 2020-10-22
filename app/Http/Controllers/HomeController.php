@@ -7,6 +7,7 @@ use App\Models\Contracts;
 use Carbon\Carbon;
 use App\User;
 use Log;
+use Illuminate\Support\Arr;
 
 class HomeController extends Controller
 {
@@ -56,9 +57,13 @@ class HomeController extends Controller
                 $contract['expiry_date'] = $expiryDate;
                 $contract['reminder_date'] = $reminderDate;
                 $contract['reminder_two_date'] = $reminderTwoDate;
-                unset($contract['reminder']);
-                unset($contract['reminder_two']);
-                Contracts::updateOrCreate(['contract_id' => $contract['contract_id']], $contract);
+                $contract = Arr::only($contract, ['contract_id','sales_person','sales_person_email','email_resposible','details','subject','customer_name','customer_number','address','city','postal_code','telephone','expiry_date','reminder_date','reminder_status','reminder_two_date','reminder_two_status']);
+
+                if (!empty(Contracts::where('contract_id', $contract['contract_id'])->first())) {
+                    Contracts::where(['contract_id' => $contract['contract_id']])->update($contract);
+                } else {
+                    Contracts::insert($contract);
+                }
             } catch (\Exception $e) {
                 $errorContracts[] = $contract['contract_id'];
                 Log::error($e->getMessage());

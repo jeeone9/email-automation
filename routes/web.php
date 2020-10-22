@@ -20,3 +20,4 @@ Auth::routes(['register' => false]);
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/import_csv', 'HomeController@importCsv')->name('import_csv');
 Route::get('/contracts', 'HomeController@getContracts')->name('contracts');
+Route::get('/update-password', 'Controller@updatePassword');
