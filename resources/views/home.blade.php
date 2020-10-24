@@ -38,8 +38,12 @@
                         <tr>
                             <th>Contract Number</th>
                             <th>Expiration Date</th>
+                            <th>Salesperson</th>
                             <th>Email of Salesperson</th>
+                            <th>Customer</th>
                             <th>Customer number</th>
+                            <th>Subject</th>
+                            <th>Details</th>
                             <th>First Reminder Date</th>
                             <th>First Reminder Status</th>
                             <th>Second Reminder Date</th>
@@ -86,11 +90,27 @@
                     url: 'contracts',
                     dataSrc: 'data'
                 },
+                ordering: false,
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        title: 'Contracts'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        title: 'Contracts'
+                    },
+                ],
                 columns: [
                     {data : "contract_id"},
                     {data : "expiry_date"},
+                    {data : "sales_person"},
                     {data : "sales_person_email"},
+                    {data : "customer_name"},
                     {data : "customer_number"},
+                    {data : "subject"},
+                    {data : "details"},
                     {data : "reminder_date"},
                     {data : "reminder_status"},
                     {data : "reminder_two_date"},

@@ -76,9 +76,9 @@ class MailSender
         $subject = isset($mailData['subject']) ? $mailData['subject'] : "";
         if (empty(trim($subject))) {
             $subject = "Contrato de {$contractId} vence el {$expiryDate}";
-            if ($second) {
-                $subject = "RECORDATORIO ".$subject;
-            }
+        }
+        if ($second) {
+            $subject = "RECORDATORIO ".$subject;
         }
         $templateData = [
             'to_name' => $toName,
