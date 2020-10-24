@@ -90,7 +90,6 @@
                     url: 'contracts',
                     dataSrc: 'data'
                 },
-                ordering: false,
                 dom: 'Bfrtip',
                 buttons: [
                     {
